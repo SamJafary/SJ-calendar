@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SJ Calendar | مبدل تاریخ</title>
+  <meta name="description" content="تبدیل تاریخ حرفه‌ای شمسی، میلادی و قمری - SJ Calendar" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ══ DARK THEME (default) ══ */
+    :root {
+      --navy:        #001f3f;
+      --navy-light:  #002f5f;
+      --navy-card:   rgba(106,154,176,0.10);
+      --navy-input:  rgba(0,31,63,0.55);
+      --steel:       #6a9ab0;
+      --steel-light: #8ab4c8;
+      --cream:       #ead8b1;
+      --cream-dark:  #d4be94;
+      --cream-muted: rgba(234,216,177,0.55);
+      --border:      rgba(106,154,176,0.30);
+      --border-soft: rgba(106,154,176,0.15);
+      --text-main:   #ead8b1;
+      --text-sub:    #8ab4c8;
+      --bg:          #001f3f;
+      --header-bg:   linear-gradient(135deg,#001f3f 0%,#002f5f 100%);
+      --radius:      14px;
+      --font:        'Vazirmatn', sans-serif;
+    }
+
+    /* ══ LIGHT THEME ══ */
+    body.light {
+      --navy:        #f0e8d5;
+      --navy-light:  #e3d5b8;
+      --navy-card:   rgba(106,154,176,0.08);
+      --navy-input:  rgba(234,216,177,0.55);
+      --steel:       #3d7a96;
+      --steel-light: #2c6080;
+      --cream:       #001f3f;
+      --cream-dark:  #002f5f;
+      --cream-muted: rgba(0,31,63,0.45);
+      --border:      rgba(61,122,150,0.28);
+      --border-soft: rgba(61,122,150,0.14);
+      --text-main:   #001f3f;
+      --text-sub:    #2c6080;
+      --bg:          #f5edda;
+      --header-bg:   linear-gradient(135deg,#e8d9be 0%,#daccaa 100%);
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      direction: rtl;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ══ Header ══ */
+    header {
+      background: var(--header-bg);
+      border-bottom: 2px solid var(--steel);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo { font-size: 1.45rem; font-weight: 700; color: var(--cream); letter-spacing: 1px; }
+    .logo span { color: var(--steel-light); }
+    .header-right { display: flex; align-items: center; gap: 14px; }
+
+    /* Theme toggle */
+    .btn-theme {
+      background: var(--navy-card);
+      border: 1.5px solid var(--border);
+      color: var(--cream);
+      border-radius: 30px;
+      padding: 7px 16px;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-theme:hover { border-color: var(--steel); background: var(--border); }
+    .theme-icon { font-size: 1rem; }
+
+    /* ══ Main ══ */
+    main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+
+    .page-title { text-align: center; margin-bottom: 32px; }
+    .page-title h1 { font-size: 1.65rem; font-weight: 700; color: var(--cream); margin-bottom: 10px; }
+    .page-title p  { color: var(--steel-light); font-size: 0.88rem; font-weight: 400; }
+
+    /* ══ Card ══ */
+    .card {
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    .card-title {
+      font-size: 1rem; font-weight: 600; color: var(--steel-light);
+      margin-bottom: 22px; display: flex; align-items: center; gap: 8px;
+    }
+    .card-title::before {
+      content: ''; display: inline-block; width: 4px; height: 18px;
+      background: var(--steel); border-radius: 4px;
+    }
+
+    /* ══ Dropdowns row ══ */
+    .direction-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    .dir-group label {
+      display: block; font-size: 0.8rem; color: var(--text-sub); margin-bottom: 6px;
+    }
+
+    .dir-select {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--navy-input);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238ab4c8' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: left 12px center;
+      padding-left: 34px;
+    }
+    .dir-select:focus { border-color: var(--steel); }
+    .dir-select option { background: #001f3f; color: #ead8b1; }
+    body.light .dir-select option { background: #f0e8d5; color: #001f3f; }
+
+    .arrow-sep {
+      font-size: 1.4rem; color: var(--steel); padding-bottom: 4px;
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+
+    /* ══ Input row ══ */
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .input-group label { display: block; font-size: 0.8rem; color: var(--text-sub); margin-bottom: 6px; }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--navy-input);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: var(--font);
+      font-size: 1rem;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.2s;
+    }
+    .input-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238ab4c8' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: left 12px center;
+      padding-left: 34px;
+      cursor: pointer;
+    }
+    .input-group input:focus,
+    .input-group select:focus { border-color: var(--steel); }
+    .input-group select option { background: #001f3f; color: #ead8b1; }
+    body.light .input-group select option { background: #f0e8d5; color: #001f3f; }
+
+    /* ══ Today btn ══ */
+    .btn-today {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-sub);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 2px;
+    }
+    .btn-today:hover { border-color: var(--steel); color: var(--cream); }
+
+    /* ══ BIG Convert button ══ */
+    .btn-convert-wrap { margin-top: 26px; text-align: center; }
+
+    .btn-convert {
+      width: 100%;
+      max-width: 460px;
+      padding: 17px 0;
+      background: linear-gradient(135deg, var(--steel) 0%, #4a7d96 50%, var(--steel-light) 100%);
+      background-size: 200% 200%;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-family: var(--font);
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+      box-shadow: 0 0 24px rgba(106,154,176,0.45), 0 4px 18px rgba(0,31,63,0.3);
+      transition: box-shadow 0.25s, transform 0.1s, background-position 0.4s;
+      animation: glowPulse 2.8s ease-in-out infinite;
+    }
+    .btn-convert:hover {
+      box-shadow: 0 0 40px rgba(106,154,176,0.7), 0 6px 28px rgba(0,31,63,0.35);
+      background-position: right center;
+    }
+    .btn-convert:active { transform: scale(0.98); }
+
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 20px rgba(106,154,176,0.4), 0 4px 16px rgba(0,31,63,0.25); }
+      50%      { box-shadow: 0 0 38px rgba(106,154,176,0.7), 0 4px 22px rgba(0,31,63,0.3); }
+    }
+
+    /* ══ Error ══ */
+    .error-msg { color: #e07070; font-size: 0.85rem; margin-top: 10px; display: none; }
+    .error-msg.visible { display: block; }
+
+    /* ══ Result ══ */
+    .result-box { display: none; margin-top: 26px; border-top: 1px solid var(--border-soft); padding-top: 24px; }
+    .result-box.visible { display: block; }
+
+    .result-title { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 14px; }
+
+    .result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; }
+
+    .result-item {
+      background: var(--navy-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .result-item .r-label { font-size: 0.76rem; color: var(--text-sub); margin-bottom: 5px; }
+    .result-item .r-value { font-size: 1.12rem; font-weight: 600; color: var(--cream); }
+    .result-item .r-sub   { font-size: 0.78rem; color: var(--text-sub); margin-top: 3px; }
+
+    .result-distance {
+      margin-top: 14px;
+      background: rgba(234,216,177,0.07);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      color: var(--cream);
+      line-height: 1.85;
+    }
+    .result-distance strong { color: var(--steel-light); }
+    body.light .result-distance { background: rgba(0,31,63,0.05); }
+
+    /* ══ Info accordion ══ */
+    .info-section { margin-top: 10px; }
+
+    .info-section details {
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .info-section summary {
+      padding: 14px 18px; cursor: pointer; font-size: 0.92rem;
+      font-weight: 600; color: var(--cream);
+      background: var(--navy-card);
+      list-style: none; display: flex; justify-content: space-between;
+      align-items: center; user-select: none;
+    }
+    .info-section summary::after { content: '﹀'; color: var(--text-sub); font-size: 0.8rem; transition: transform 0.2s; }
+    .info-section details[open] summary::after { transform: rotate(180deg); }
+
+    .info-content { padding: 16px 18px; font-size: 0.87rem; color: var(--text-sub); line-height: 1.9; }
+
+    .month-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-top: 8px; }
+    .month-table th { background: var(--navy-card); color: var(--text-sub); padding: 9px 12px; text-align: right; font-weight: 600; border-bottom: 1px solid var(--border); }
+    .month-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-soft); color: var(--cream); }
+    .month-table tr:last-child td { border-bottom: none; }
+    .month-table tr:hover td { background: rgba(106,154,176,0.06); }
+
+    /* ══ Footer ══ */
+    footer { text-align: center; padding: 28px 16px; color: var(--cream-muted); font-size: 0.8rem; border-top: 1px solid var(--border-soft); }
+    footer a { color: var(--steel-light); text-decoration: none; }
+
+    /* ══ Responsive ══ */
+    @media (max-width: 600px) {
+      .direction-row { grid-template-columns: 1fr auto 1fr; gap: 7px; }
+      .input-row { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+      .page-title h1 { font-size: 1.25rem; }
+      .btn-convert { font-size: 1.05rem; padding: 15px 0; }
+      .logo { font-size: 1.15rem; }
+      .btn-theme { font-size: 0.75rem; padding: 6px 10px; }
+    }
+    @media (max-width: 380px) {
+      .direction-row { grid-template-columns: 1fr 0.3fr 1fr; }
+      .input-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><img src="logo.png" alt="SJ Calendar" style="height:40px;width:auto;display:block;" /></div>
+  <div class="header-right">
+    <button class="btn-theme" id="btn-theme" onclick="toggleTheme()">
+      <span class="theme-icon" id="theme-icon">☀️</span>
+      <span id="theme-label">تم روشن</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="page-title">
+    <img src="logo.png" alt="SJ Calendar" style="height:110px;width:auto;margin:0 auto 18px;display:block;" />
+    <h1>تبدیل تاریخ شمسی، میلادی و قمری</h1>
+    <p>تبدیل تاریخ حرفه‌ای سام جعفری | SJ Calendar</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">مبدل تاریخ</div>
+
+    <!-- Direction selects -->
+    <div class="direction-row">
+      <div class="dir-group">
+        <label>تاریخ ورودی</label>
+        <select class="dir-select" id="sel-from" onchange="onFromChange()">
+          <option value="jalali">شمسی</option>
+          <option value="gregorian">میلادی</option>
+          <option value="hijri">قمری</option>
+        </select>
+      </div>
+      <div class="arrow-sep">←</div>
+      <div class="dir-group">
+        <label>تبدیل به</label>
+        <select class="dir-select" id="sel-to">
+          <option value="gregorian">میلادی</option>
+          <option value="hijri">قمری</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Date inputs -->
+    <div class="input-row">
+      <div class="input-group">
+        <label id="label-year">سال (شمسی)</label>
+        <input type="number" id="inp-year" placeholder="۱۴۰۳" min="1" />
+      </div>
+      <div class="input-group">
+        <label>ماه</label>
+        <select id="inp-month"></select>
+      </div>
+      <div class="input-group">
+        <label>روز</label>
+        <input type="number" id="inp-day" placeholder="روز" min="1" max="31" />
+      </div>
+    </div>
+
+    <button class="btn-today" id="btn-today" onclick="fillToday()">📅 تاریخ امروز</button>
+    <div class="error-msg" id="error-msg">تاریخ وارد شده معتبر نیست.</div>
+
+    <!-- Big convert button at bottom of card -->
+    <div class="btn-convert-wrap">
+      <button class="btn-convert" id="btn-convert" onclick="convert()">⟳ تبدیل تاریخ</button>
+    </div>
+
+    <!-- Result -->
+    <div class="result-box" id="result-box">
+      <div class="result-title">نتیجه تبدیل:</div>
+      <div class="result-grid" id="result-grid"></div>
+      <div class="result-distance" id="result-distance"></div>
+    </div>
+  </div>
+
+  <!-- Info accordion -->
+  <div class="info-section">
+    <details>
+      <summary>ماه‌های تقویم شمسی و میلادی</summary>
+      <div class="info-content">
+        <table class="month-table">
+          <thead><tr><th>#</th><th>ماه شمسی</th><th>ماه میلادی</th><th>تعداد روز</th></tr></thead>
+          <tbody>
+            <tr><td>۱</td><td>فروردین</td><td>March – April</td><td>۳۱</td></tr>
+            <tr><td>۲</td><td>اردیبهشت</td><td>April – May</td><td>۳۱</td></tr>
+            <tr><td>۳</td><td>خرداد</td><td>May – June</td><td>۳۱</td></tr>
+            <tr><td>۴</td><td>تیر</td><td>June – July</td><td>۳۱</td></tr>
+            <tr><td>۵</td><td>مرداد</td><td>July – August</td><td>۳۱</td></tr>
+            <tr><td>۶</td><td>شهریور</td><td>August – September</td><td>۳۱</td></tr>
+            <tr><td>۷</td><td>مهر</td><td>September – October</td><td>۳۰</td></tr>
+            <tr><td>۸</td><td>آبان</td><td>October – November</td><td>۳۰</td></tr>
+            <tr><td>۹</td><td>آذر</td><td>November – December</td><td>۳۰</td></tr>
+            <tr><td>۱۰</td><td>دی</td><td>December – January</td><td>۳۰</td></tr>
+            <tr><td>۱۱</td><td>بهمن</td><td>January – February</td><td>۳۰</td></tr>
+            <tr><td>۱۲</td><td>اسفند</td><td>February – March</td><td>۲۹ یا ۳۰</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+    <details>
+      <summary>درباره تبدیل تاریخ</summary>
+      <div class="info-content">
+        <p>هر سال عادی تقویم شمسی و میلادی ۳۶۵ روز و سال‌های کبیسه ۳۶۶ روز دارد. اولین روز تقویم شمسی برابر ۲۲ مارچ سال ۶۲۲ میلادی است.</p>
+        <br>
+        <p>طول یک سال قمری ۳۵۴ یا ۳۵۵ روز است و مبدأ آن جمعه اول محرم سال ۱ برابر با ۱۹ جولای ۶۲۲ میلادی می‌باشد. هر دوره ۳۰ ساله قمری دارای ۱۱ سال کبیسه است.</p>
+      </div>
+    </details>
+  </div>
+</main>
+
+<footer>
+  <p>SJ Calendar &nbsp;|&nbsp; تبدیل تاریخ حرفه‌ای سام جعفری</p>
+  <p style="margin-top:6px"><a href="https://github.com/SamJafary/SJ-calendar" target="_blank">GitHub</a></p>
+</footer>
+
+<script>
+// ══════════════════════════════════════════
+//  Theme
+// ══════════════════════════════════════════
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('theme-icon').textContent  = isDark ? '☀️' : '🌙';
+  document.getElementById('theme-label').textContent = isDark ? 'تم روشن' : 'تم تیره';
+}
+
+// ══════════════════════════════════════════
+//  Calendar Data
+// ══════════════════════════════════════════
+const JALALI_MONTHS    = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const GREGORIAN_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const GREGORIAN_FA     = ['ژانویه','فوریه','مارس','آوریل','مه','ژوئن','ژوئیه','اوت','سپتامبر','اکتبر','نوامبر','دسامبر'];
+const HIJRI_MONTHS     = ['محرم','صفر','ربیع‌الاول','ربیع‌الثانی','جمادی‌الاول','جمادی‌الثانی','رجب','شعبان','رمضان','شوال','ذی‌القعده','ذی‌الحجه'];
+const WEEKDAYS_FA      = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+
+const CAL_NAMES = { jalali: 'شمسی', gregorian: 'میلادی', hijri: 'قمری' };
+const CAL_MONTHS = { jalali: JALALI_MONTHS, gregorian: GREGORIAN_FA, hijri: HIJRI_MONTHS };
+const CAL_PLACEHOLDER = { jalali: '۱۴۰۳', gregorian: '2024', hijri: '۱۴۴۶' };
+
+// ══════════════════════════════════════════
+//  JDN Algorithms
+// ══════════════════════════════════════════
+function jalaliToJdn(jy, jm, jd) {
+  let epbase = jy - (jy >= 0 ? 474 : 473);
+  let epyear = 474 + epbase % 2820;
+  return jd
+    + (jm <= 7 ? (jm - 1) * 31 : (jm - 1) * 30 + 6)
+    + Math.floor((epyear * 682 - 110) / 2816)
+    + (epyear - 1) * 365
+    + Math.floor(epbase / 2820) * 1029983
+    + 1948320;
+}
+
+function jdnToJalali(jdn) {
+  function divmod(a,b){ return [Math.floor(a/b), ((a%b)+b)%b]; }
+  let depoch = jdn - jalaliToJdn(475,1,1);
+  let [cycle, cyear] = divmod(depoch, 1029983);
+  let ycycle;
+  if (cyear === 1029982) { ycycle = 2820; }
+  else {
+    let [a1,a2] = divmod(cyear, 366);
+    ycycle = Math.floor((2134*a1 + 2816*a2 + 2815)/1028522) + a1 + 1;
+  }
+  let year = ycycle + 2820*cycle + 474;
+  if (year <= 0) year--;
+  let yday = jdn - jalaliToJdn(year,1,1) + 1;
+  let month = yday <= 186 ? Math.ceil(yday/31) : Math.ceil((yday-6)/30);
+  let day = jdn - jalaliToJdn(year, month, 1) + 1;
+  return [year, month, day];
+}
+
+function gregorianToJdn(gy, gm, gd) {
+  let a = Math.floor((14 - gm) / 12);
+  let y = gy + 4800 - a;
+  let m = gm + 12 * a - 3;
+  return gd + Math.floor((153*m+2)/5) + 365*y + Math.floor(y/4) - Math.floor(y/100) + Math.floor(y/400) - 32045;
+}
+
+function jdnToGregorian(jdn) {
+  let l = jdn + 68569;
+  let n = Math.floor(4*l/146097);
+  l = l - Math.floor((146097*n+3)/4);
+  let i = Math.floor(4000*(l+1)/1461001);
+  l = l - Math.floor(1461*i/4) + 31;
+  let j = Math.floor(80*l/2447);
+  let day = l - Math.floor(2447*j/80);
+  l = Math.floor(j/11);
+  let month = j + 2 - 12*l;
+  let year = 100*(n-49) + i + l;
+  return [year, month, day];
+}
+
+function hijriToJdn(hy, hm, hd) {
+  return Math.floor((11*hy+3)/30) + 354*hy + 30*hm
+    - Math.floor((hm-1)/2) + hd + 1948440 - 385;
+}
+
+function jdnToHijri(jdn) {
+  let l = jdn - 1948440 + 10632;
+  let n = Math.floor((l-1)/10631);
+  l = l - 10631*n + 354;
+  let j = Math.floor((10985-l)/5316)*Math.floor(50*l/17719)
+    + Math.floor(l/5670)*Math.floor(43*l/15238);
+  l = l - Math.floor((30-j)/15)*Math.floor(17719*j/50)
+    - Math.floor(j/16)*Math.floor(15238*j/43) + 29;
+  let month = Math.floor(24*l/709);
+  let day = l - Math.floor(709*month/24);
+  let year = 30*n + j - 30;
+  return [year, month, day];
+}
+
+function calToJdn(cal, y, m, d) {
+  if (cal === 'jalali')    return jalaliToJdn(y, m, d);
+  if (cal === 'gregorian') return gregorianToJdn(y, m, d);
+  if (cal === 'hijri')     return hijriToJdn(y, m, d);
+}
+
+function jdnToCal(cal, jdn) {
+  if (cal === 'jalali')    return jdnToJalali(jdn);
+  if (cal === 'gregorian') return jdnToGregorian(jdn);
+  if (cal === 'hijri')     return jdnToHijri(jdn);
+}
+
+function jdnToWeekday(jdn) { return WEEKDAYS_FA[(jdn+1)%7]; }
+
+// ══════════════════════════════════════════
+//  Helpers
+// ══════════════════════════════════════════
+function toFa(n) { return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
+function toEn(s) { return String(s).replace(/[۰-۹]/g, d => d.charCodeAt(0)-1776); }
+
+function formatDate(cal, y, m, d) {
+  if (cal === 'gregorian') return y + '/' + String(m).padStart(2,'0') + '/' + String(d).padStart(2,'0');
+  return toFa(y) + '/' + toFa(String(m).padStart(2,'0')) + '/' + toFa(String(d).padStart(2,'0'));
+}
+
+function monthName(cal, m) { return CAL_MONTHS[cal][m-1]; }
+
+function getTodayJdn() {
+  // Use local time to avoid UTC offset shifting the date
+  let n = new Date();
+  let y = n.getFullYear();
+  let mo = n.getMonth() + 1;
+  let d = n.getDate();
+  return gregorianToJdn(y, mo, d);
+}
+
+function getTodayLocalDate() {
+  let n = new Date();
+  return [n.getFullYear(), n.getMonth()+1, n.getDate()];
+}
+
+function formatDistance(jdn) {
+  let diff = jdn - getTodayJdn();
+  if (diff === 0) return 'این تاریخ <strong>امروز</strong> است.';
+  let abs = Math.abs(diff);
+  let y = Math.floor(abs/365), r = abs%365, mo = Math.floor(r/30), dz = r%30;
+  let parts = [];
+  if (y)  parts.push(y + ' سال');
+  if (mo) parts.push(mo + ' ماه');
+  if (dz) parts.push(dz + ' روز');
+  let s = parts.join(' و ');
+  return diff < 0
+    ? `این تاریخ <strong>${s}</strong> پیش بوده است. (${toFa(abs)} روز گذشته)`
+    : `این تاریخ <strong>${s}</strong> دیگر فرا می‌رسد. (${toFa(abs)} روز مانده)`;
+}
+
+function resultItem(label, value, sub) {
+  return `<div class="result-item">
+    <div class="r-label">${label}</div>
+    <div class="r-value">${value}</div>
+    ${sub ? `<div class="r-sub">${sub}</div>` : ''}
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+//  UI
+// ══════════════════════════════════════════
+function buildMonthSelect(cal) {
+  const sel = document.getElementById('inp-month');
+  sel.innerHTML = '';
+  CAL_MONTHS[cal].forEach((name, i) => {
+    const opt = document.createElement('option');
+    opt.value = i+1; opt.textContent = name;
+    sel.appendChild(opt);
+  });
+}
+
+function buildToSelect() {
+  const from = document.getElementById('sel-from').value;
+  const toSel = document.getElementById('sel-to');
+  const prev = toSel.value;
+  toSel.innerHTML = '';
+  ['jalali','gregorian','hijri'].forEach(cal => {
+    if (cal === from) return;
+    const opt = document.createElement('option');
+    opt.value = cal; opt.textContent = CAL_NAMES[cal];
+    if (cal === prev && cal !== from) opt.selected = true;
+    toSel.appendChild(opt);
+  });
+}
+
+function onFromChange() {
+  const from = document.getElementById('sel-from').value;
+  document.getElementById('label-year').textContent = 'سال (' + CAL_NAMES[from] + ')';
+  document.getElementById('inp-year').placeholder = CAL_PLACEHOLDER[from];
+  buildMonthSelect(from);
+  buildToSelect();
+  document.getElementById('result-box').classList.remove('visible');
+  document.getElementById('error-msg').classList.remove('visible');
+}
+
+function fillToday() {
+  const from = document.getElementById('sel-from').value;
+  const todayJdn = getTodayJdn();
+  const [y, m, d] = jdnToCal(from, todayJdn);
+  document.getElementById('inp-year').value  = y;
+  document.getElementById('inp-month').value = m;
+  document.getElementById('inp-day').value   = d;
+}
+
+function showError() {
+  document.getElementById('error-msg').classList.add('visible');
+  document.getElementById('result-box').classList.remove('visible');
+}
+
+function hideError() { document.getElementById('error-msg').classList.remove('visible'); }
+
+function convert() {
+  hideError();
+  const from = document.getElementById('sel-from').value;
+  const to   = document.getElementById('sel-to').value;
+  const y = parseInt(toEn(document.getElementById('inp-year').value));
+  const m = parseInt(document.getElementById('inp-month').value);
+  const d = parseInt(toEn(document.getElementById('inp-day').value));
+
+  if (!y || !m || !d || d < 1 || d > 31) { showError(); return; }
+
+  let jdn;
+  try { jdn = calToJdn(from, y, m, d); } catch(e) { showError(); return; }
+
+  const [ry, rm, rd] = jdnToCal(to, jdn);
+  const wd = jdnToWeekday(jdn);
+
+  // Always show all three calendars + weekday
+  const all = ['jalali','gregorian','hijri'];
+  let grid = '';
+  all.forEach(cal => {
+    const [cy, cm, cd] = jdnToCal(cal, jdn);
+    const label = 'تاریخ ' + CAL_NAMES[cal];
+    const val = formatDate(cal, cy, cm, cd);
+    const sub = monthName(cal, cm);
+    grid += resultItem(label, val, sub);
+  });
+  grid += resultItem('روز هفته', wd, '');
+
+  document.getElementById('result-grid').innerHTML = grid;
+  document.getElementById('result-distance').innerHTML = formatDistance(jdn);
+  document.getElementById('result-box').classList.add('visible');
+}
+
+// Enter key
+document.addEventListener('keydown', e => { if (e.key === 'Enter') convert(); });
+
+// ── Init ──
+buildToSelect();
+buildMonthSelect('jalali');
+</script>
+</body>
+</html>
