@@ -331,10 +331,10 @@
 <body>
 
 <header>
-  <div class="logo">SJ <span>Calendar</span></div>
+  <div class="logo">SJ<span>تبدیل تاریخ حرفه ای</span></div>
   <div class="header-right">
     <button class="btn-theme" id="btn-theme" onclick="toggleTheme()">
-      <span class="theme-icon" id="theme-icon">☀️</span>
+      <span class="theme-icon" id="theme-icon"></span>
       <span id="theme-label">تم روشن</span>
     </button>
   </div>
@@ -386,12 +386,12 @@
       </div>
     </div>
 
-    <button class="btn-today" id="btn-today" onclick="fillToday()">📅 تاریخ امروز</button>
+    <button class="btn-today" id="btn-today" onclick="fillToday()">تاریخ امروز</button>
     <div class="error-msg" id="error-msg">تاریخ وارد شده معتبر نیست.</div>
 
     <!-- Big convert button at bottom of card -->
     <div class="btn-convert-wrap">
-      <button class="btn-convert" id="btn-convert" onclick="convert()">⟳ تبدیل تاریخ</button>
+      <button class="btn-convert" id="btn-convert" onclick="convert()">تبدیل تاریخ</button>
     </div>
 
     <!-- Result -->
@@ -439,6 +439,7 @@
 
 <footer>
   <p>SJ Calendar &nbsp;|&nbsp; تبدیل تاریخ حرفه‌ای سام جعفری</p>
+  <p> چو ایران مباشد تن من مباد <p>
   <p style="margin-top:6px"><a href="https://github.com/SamJafary/SJ-calendar" target="_blank">GitHub</a></p>
 </footer>
 
@@ -450,14 +451,14 @@ let isDark = true;
 function toggleTheme() {
   isDark = !isDark;
   document.body.classList.toggle('light', !isDark);
-  document.getElementById('theme-icon').textContent  = isDark ? '☀️' : '🌙';
+  document.getElementById('theme-icon').textContent  = isDark ? '' : '';
   document.getElementById('theme-label').textContent = isDark ? 'تم روشن' : 'تم تیره';
 }
 
 // ══════════════════════════════════════════
 //  Calendar Data
 // ══════════════════════════════════════════
-const JALALI_MONTHS    = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const JALALI_MONTHS    = ['فروردین-ماه اول','اردیبهشت-ماه دوم','خرداد-ماه سوم','تیر-ماه چهارم','مرداد-ماه پنجم','شهریور-ماه ششم','مهر-ماه هفتم','آبان-ماه هشتم','آذر-ماه نهم','دی-ماه دهم','بهمن-ماه یازدهم','اسفند'];
 const GREGORIAN_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const GREGORIAN_FA     = ['ژانویه','فوریه','مارس','آوریل','مه','ژوئن','ژوئیه','اوت','سپتامبر','اکتبر','نوامبر','دسامبر'];
 const HIJRI_MONTHS     = ['محرم','صفر','ربیع‌الاول','ربیع‌الثانی','جمادی‌الاول','جمادی‌الثانی','رجب','شعبان','رمضان','شوال','ذی‌القعده','ذی‌الحجه'];
